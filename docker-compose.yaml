@@ -1,7 +1,6 @@
 services:
   nginx:
     image: nginx:latest
-    user: 1000:1000
     container_name: nginx
     network_mode: host
     volumes:
@@ -25,7 +24,6 @@ services:
 
   certbot:
     image: certbot/certbot:latest
-    user: 1000:1000
     container_name: certbot
     volumes:
       - type: bind
