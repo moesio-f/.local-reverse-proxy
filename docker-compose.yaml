@@ -19,6 +19,8 @@ services:
     restart: 'unless-stopped'
     # Every 6h reload nginx on the background while run nginx on foreground, in both cases substitute template
     command: "/bin/sh -c \"while :; do sleep 6h & wait $${!}; envsubst '$${HTTP_PORT} $${HTTPS_PORT} $${SERVER_NAME} $${CERT_PEM} $${CERT_KEY} $${ACME_CHALLENGE} $${PROXY_HOST} $${PROXY_PORT}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf; nginx -s reload; done & envsubst '$${HTTP_PORT} $${HTTPS_PORT} $${SERVER_NAME} $${CERT_PEM} $${CERT_KEY} $${ACME_CHALLENGE} $${PROXY_HOST} $${PROXY_PORT}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf; nginx -g 'daemon off;'\""
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   certbot:
     image: certbot/certbot:latest
