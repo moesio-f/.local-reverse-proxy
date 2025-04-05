@@ -1,6 +1,6 @@
 # Locel Reverse Proxy
 
-This repository contains a simple reverse proxy (NGINX) with automatic SSL certificate renewal (Cerbot). The default configuration provides support for a single domain on both HTTP (redirects all traffic to HTTPS) and HTTPS.
+This repository contains a simple reverse proxy (NGINX) with automatic SSL certificate renewal (Certbot). The default configuration provides support for a single domain on both HTTP (redirects all traffic to HTTPS) and HTTPS.
 
 ## Setup and Run
 
