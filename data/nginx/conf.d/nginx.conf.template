@@ -1,0 +1,32 @@
+server
+{
+	listen $HTTP_PORT default_server;
+	server_name _;
+	return 301 https://$host$request_uri;
+}
+
+server
+{
+	listen $HTTPS_PORT ssl;
+	server_name $SERVER_NAME;
+
+	ssl_certificate $CERT_PEM;
+	ssl_certificate_key $CERT_KEY;
+
+	# include /etc/letsencrypt/options-ssl-nginx.conf;
+	# ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+	location /.well-known/acme-challenge/
+	{
+		root $ACME_CHALLENGE;
+	}
+
+	location /
+	{
+		# Maybe include allow/deny filters
+		include filters/*.conf;
+
+		proxy_pass http://$PROXY_HOST:$PROXY_PORT;
+		proxy_http_version 1.1;
+	}
+}

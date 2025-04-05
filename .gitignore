@@ -1,0 +1,20 @@
+# Ignore sensitive environment
+sensitive.env
+
+# Ignore everything inside data
+data/*
+
+# Except data/nginx
+!data/nginx
+
+# Then ignore everything inside data/nginx
+data/nginx/*
+
+# Except the conf.d subdirectory
+!data/nginx/conf.d
+
+# Then ignore all files inside conf.d
+data/nginx/conf.d/*
+
+# Except template files
+!data/nginx/conf.d/*.template

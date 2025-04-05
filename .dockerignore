@@ -1,0 +1,5 @@
+# This is a whitelist
+*
+!docker-compose.yaml
+!data/nginx/conf.d
+

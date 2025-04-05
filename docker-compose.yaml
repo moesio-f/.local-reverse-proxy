@@ -1,0 +1,35 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    network_mode: host
+    volumes:
+      - type: bind
+        source: ./data/nginx/conf.d
+        target: /etc/nginx/conf.d
+      - type: bind
+        source: ./data/letsencrypt
+        target: /etc/letsencrypt
+      - type: bind
+        source: ./data/certbot/www
+        target: /var/www/certbot
+    env_file:
+      - ./common.env
+      - ./sensitive.env
+    restart: 'unless-stopped'
+    # Every 6h reload nginx on the background while run nginx on foreground, in both cases substitute template
+    command: "/bin/sh -c \"while :; do sleep 6h & wait $${!}; envsubst '$${HTTP_PORT} $${HTTPS_PORT} $${SERVER_NAME} $${CERT_PEM} $${CERT_KEY} $${ACME_CHALLENGE} $${PROXY_HOST} $${PROXY_PORT}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf; nginx -s reload; done & envsubst '$${HTTP_PORT} $${HTTPS_PORT} $${SERVER_NAME} $${CERT_PEM} $${CERT_KEY} $${ACME_CHALLENGE} $${PROXY_HOST} $${PROXY_PORT}' < /etc/nginx/conf.d/nginx.conf.template > /etc/nginx/conf.d/nginx.conf; nginx -g 'daemon off;'\""
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - type: bind
+        source: ./data/letsencrypt
+        target: /etc/letsencrypt
+      - type: bind
+        source: ./data/certbot/www
+        target: /var/www/certbot
+    restart: 'unless-stopped'
+    # Every 12h try to renew the certificates
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
